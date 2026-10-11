@@ -1,0 +1,1 @@
+export default function PageHead({title,sub,children}){return <div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><h1 className="text-3xl font-bold tracking-tight">{title}</h1><p className="text-sm text-indigo-200/60">{sub}</p></div><div className="flex flex-wrap gap-2">{children}</div></div>}

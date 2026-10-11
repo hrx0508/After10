@@ -1,0 +1,3 @@
+import {motion} from 'framer-motion';
+const V={ghost:'border border-indigo-300/20 bg-white/5 hover:bg-white/10',primary:'bg-gradient-to-r from-indigo-500 to-violet-500 font-bold shadow-lg shadow-indigo-500/30 hover:brightness-110',danger:'border border-rose-400/30 bg-rose-500/10 text-rose-200 hover:bg-rose-500/20',good:'bg-emerald-400 font-bold text-black hover:bg-emerald-300'};
+export default function Btn({v='ghost',className='',...p}){return <motion.button whileTap={{scale:.95}} {...p} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition ${V[v]} ${className}`}/>}

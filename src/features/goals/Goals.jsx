@@ -1,0 +1,11 @@
+import {useState} from 'react';import {Plus} from 'lucide-react';import Card from '../../components/ui/Card.jsx';import Btn from '../../components/ui/Btn.jsx';import PageHead from '../../components/ui/PageHead.jsx';import Ring from '../../components/ui/Ring.jsx';
+import {useFinance} from '../../store/useFinance.js';import {useSim} from '../../hooks/useSim.js';import {inr} from '../../core/format.js';
+const inp='rounded-xl border border-indigo-300/20 bg-black/30 px-3 py-2 text-sm';
+export default function Goals(){const st=useFinance(),r=useSim(),[n,setN]=useState(''),[t,setT]=useState(''),[p,setP]=useState(200);
+ return <div><PageHead title="Savings Goals" sub="Every spend changes how soon you get there."/>
+ <div className="grid gap-5 md:grid-cols-2">{r.goals.map(g=>{const ok=g.eta<=g.within;return <Card key={g.id} layout className="flex items-center gap-5"><Ring v={g.saved/g.target} color={ok?'#34d399':'#fb7185'} size={116}><span className="text-2xl">{g.icon}</span><p className="text-xs">{Math.round(g.saved/g.target*100)}%</p></Ring>
+  <div className="flex-1"><p className="text-lg font-bold">{g.name}</p><p className="text-sm text-white/60">{inr(g.saved)} of {inr(g.target)}</p>
+   <p className="mt-1 text-sm">ETA {Number.isFinite(g.eta)?`${g.eta} days`:'never'} <span className={ok?'text-emerald-300':'text-rose-300'}>{ok?'✓ on track':`✕ past ${g.within}-day target`}</span></p>
+   <p className="text-xs text-white/50">{inr(g.saved)} saved = {(g.saved/r.pace).toFixed(0)} days unlocked.</p><Btn className="mt-3" onClick={()=>st.contribute(g.id,500)}>Add ₹500</Btn></div></Card>})}</div>
+ <Card className="mt-5"><p className="mb-2 font-bold">New goal</p><div className="flex flex-wrap gap-2"><input className={`${inp} flex-1`} placeholder="Goal name" value={n} onChange={e=>setN(e.target.value)}/><input className={`${inp} w-28`} type="number" placeholder="Target ₹" value={t} onChange={e=>setT(e.target.value)}/><input className={`${inp} w-28`} type="number" placeholder="Reserve ₹" value={p} onChange={e=>setP(e.target.value)}/>
+  <Btn v="primary" disabled={!n||!+t} onClick={()=>{st.addGoal(n,+t,+p||0);setN('');setT('')}}><Plus size={16}/>Create</Btn></div></Card></div>}

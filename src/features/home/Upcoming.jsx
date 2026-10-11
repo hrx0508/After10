@@ -1,0 +1,3 @@
+import Card from '../../components/ui/Card.jsx';import {inr} from '../../core/format.js';
+export default function Upcoming({st}){const all=[...st.commitments.map(b=>({...b,t:b.tag})),...st.subs.filter(s=>s.active).map(b=>({...b,t:'Subscription'})),...st.income.map(i=>({...i,icon:'💰',t:'Incoming',inc:true}))].filter(b=>b.day>=st.day).sort((a,b)=>a.day-b.day);
+ return <Card><h3 className="mb-3 font-bold">Upcoming money moves</h3><div className="space-y-2">{all.map(b=><div key={b.id} className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-sm"><span>{b.icon} {b.name} <i className="text-xs text-white/40">{b.t}</i></span><span className={b.inc?'text-emerald-300':''}>Day {b.day} · {b.inc?'+':''}{inr(b.amount)}</span></div>)}</div></Card>}
