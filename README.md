@@ -49,7 +49,10 @@ All features below are implemented in the current code.
 | **Home dashboard** | Balance, safe daily spend, first goal progress, health score, risk level, 30-day weather strip, projected balance chart, health breakdown, spending-by-category donut, upcoming bills and income, generated insights. |
 | **Money Multiverse** | Enter a purchase and run "Run simulation" to create three forks: *Buy now*, *Wait 2 weeks*, *Cheaper option* (60% of the price). Each fork shows safe daily spend, month-end balance, goal ETA delay, health and risk as deltas against Reality, plus a regret meter ("costs X days of safe spending"). Up to 3 forks at once; commit one or discard. |
 | **Money Weather** | Each future day is rated Good / Okay / Rain / Storm from projected cushion (days of spending left after goal money). Bills appear as markers; forks can be selected to see which days get worse. A storm-shield bar shows whether a surprise ₹1,000 is absorbed. |
-| **Risk fan chart** | Shows the likely balance range (10th to 90th percentile) from 300 simulated months, with Reality and fork lines overlaid. |
+| **Risk fan chart** | Dependency-free SVG chart of the likely balance range (10th to 90th percentile) from 300 simulated months, with Reality and fork lines overlaid and a hover readout. |
+| **Can I afford it?** | On the Multiverse page, the amount slider gives an instant Yes / Risky / No verdict and, when possible, the cheapest fix (freeze one subscription, or take the 60% option). |
+| **Ripple effect** | Selecting a fork reveals the consequence chain in sequence: month-end balance → safe daily spend → goal ETA → survival → health, each with its delta. |
+| **Transactions** | Ledger for spending, scheduled income (mark received or cancel) and bills. Deleting a logged spend restores the balance. |
 | **Add money / Log spend** | Add income received today or scheduled for a later day; log spending by category. Daily pace is derived from logged spending. |
 | **Subscriptions** | Toggle, multi-select and pause subscriptions, with the runway gain shown before pausing. Add new subscriptions. |
 | **Chaos Cards** | Preview the impact of shocks (repairs, refunds, freelance payout, a "Worst week" stress test) on month-end balance, daily spend, survival and health, then optionally apply them. |
@@ -89,13 +92,13 @@ Daily pace is the total of logged spending divided by days elapsed (minimum ₹6
 | Vite | Dev server and build | `vite.config.js`, npm scripts |
 | Tailwind CSS v4 (`@tailwindcss/vite`) | Styling | Utility classes, plus a few custom classes in `src/index.css` |
 | Framer Motion | Animation | Animated numbers, rings, fork cards, page and modal transitions |
-| React Router | Routing | `src/App.jsx` (7 routes) |
+| React Router (HashRouter) | Routing | `src/App.jsx` (8 lazy-loaded routes; deep links work on any static host) |
 | Zustand (`persist`) | State and persistence | `src/store/useFinance.js` |
-| Recharts | Charts | Forecast/risk-fan chart, spending donut |
+| Vitest | Unit tests | `src/core/engine.test.js` |
 | Lucide React | Icons | Sidebar, buttons, weather |
 | Google Fonts (Space Grotesk) | Typography | Loaded from `index.html` (needs internet) |
 
-Dependencies are declared with loose ranges in `package.json`; no lockfile is included, so installed versions may differ over time.
+Dependencies use caret ranges in `package.json`; no lockfile is included, so run `npm install` once and commit the generated `package-lock.json`. Charts are plain SVG, so there is no charting dependency.
 
 ## Project Structure
 
@@ -106,16 +109,17 @@ after10/
 ├── vite.config.js
 └── src/
     ├── main.jsx, App.jsx, index.css
-    ├── core/            engine.js (simulate), format.js
+    ├── core/            engine.js (simulate), verdict.js, format.js, engine.test.js
     ├── store/           useFinance.js (state + actions)
     ├── hooks/           useSim.js (useSim, useForkRows, useScenario)
     ├── components/
     │   ├── ui/          Card, Btn, Num, Ring, Delta, Modal, PageHead
     │   ├── layout/      Shell, Sidebar, Topbar
-    │   └── charts/      ForecastChart
+    │   └── charts/      ForecastChart, Donut (SVG)
     └── features/
         ├── home/        Home, StatCards, HealthBreakdown, DaysOfLife, SpendDonut, Upcoming, Insights
-        ├── multiverse/  Multiverse, ForkCard
+        ├── multiverse/  Multiverse, ForkCard, Verdict, Ripple
+        ├── ledger/      Ledger, Lists
         ├── weather/     Weather, WeatherStrip, weatherMeta
         ├── subscriptions/ Subscriptions
         ├── chaos/       Chaos
@@ -144,13 +148,15 @@ Open the local URL Vite prints.
 | `npm run dev` | Start the dev server |
 | `npm run build` | Production build to `dist/` |
 | `npm run preview` | Serve the production build locally |
+| `npm test` | Run the Vitest unit tests |
 
 ## Usage
 
 Suggested demo flow:
 
 1. **Add money** or **Log spend** from the top bar and watch the dashboard update.
-2. Open **Money Multiverse**, pick a purchase, choose **Run simulation**, compare the three forks, then **Commit** one.
+2. Open **Money Multiverse**, drag the amount and read the **Yes / Risky / No** verdict, choose **Run simulation**, compare the three forks, watch the **ripple effect**, then **Commit** one.
+   Review or undo entries on **Transactions**.
 3. Open **Money Weather** and select a fork to see which days worsen.
 4. Open **Subscriptions**, select some and see the runway gain, then **Pause selected**.
 5. Open **Chaos Cards**, preview a shock, then apply it or close.
@@ -164,6 +170,20 @@ Use **Next day** to advance the month and **Reset** (circular arrow) to restore 
 - No authentication, secrets or third-party APIs are used (apart from loading Google Fonts).
 - Not intended for real financial data.
 
+## Accessibility and Performance
+
+- Skip-to-content link, labelled navigation landmarks, labelled form fields and icon buttons, tabs with ARIA roles, and a dialog with `Escape` to close.
+- Toasts are announced via `role="status"`; charts expose text summaries and a hover/readout line.
+- Reduced motion is respected (Framer Motion `reducedMotion="user"` plus a CSS media query).
+- Text contrast was raised for secondary labels; the dark theme has not been audited with a contrast tool.
+- Routes are lazy-loaded and charts are hand-written SVG, which keeps the bundle small. No bundle-size or Lighthouse figures have been measured.
+
+## Testing
+
+`npm test` runs Vitest tests in `src/core/engine.test.js` covering the simulation (safe daily spend, curve, bills, income, decisions, determinism, health range, goal ETA), formatters, tiers and the affordability verdict.
+
+Verification status: the engine assertions were executed with Node in the authoring environment and every `.js`/`.jsx` file was syntax-checked and had its relative imports resolved. Vitest, `npm install` and `npm run build` could not be run there (no network), so run them once locally.
+
 ## Technical Decisions
 
 - **Single pure engine:** one function feeds every screen, which keeps views consistent and makes "what-if" views cheap (call it with extra decisions).
@@ -173,8 +193,8 @@ Use **Next day** to advance the month and **Reset** (circular arrow) to restore 
 
 ## Limitations
 
-- **Not yet verified:** this codebase has not been installed, built or run end to end in the environment where it was written. Expect to fix small dependency or version issues on first run.
-- No automated tests, linting or CI are configured.
+- **Not yet run in a browser:** the app was not installed, built or opened where it was written (see Testing). Expect to fix small dependency or version issues on first run.
+- Unit tests cover the engine only; there are no component or end-to-end tests, linting or CI.
 - Seeded demo data only; no bank, UPI or SMS import.
 - The risk model is simplified (uniform spending variation, flat shock probability) and is illustrative, not predictive.
 - "Next day" deducts the average pace rather than real spending.
@@ -184,12 +204,12 @@ Use **Next day** to advance the month and **Reset** (circular arrow) to restore 
 
 ## Future Improvements
 
-- Unit tests for `simulate()` and the store actions.
+- Component and end-to-end tests; ESLint and CI.
 - Parse pasted UPI/bank SMS into the ledger.
 - Cooling-off timer on forks ("sleep on it for 24h").
 - Shareable "regret receipt" image.
 - Time scrubber across the 30 days.
-- Editable commitments and income schedules.
+- Editing (not just adding/removing) bills and income.
 
 ## Contributing
 
@@ -197,7 +217,7 @@ Fork, create a branch, make changes, run `npm run build`, and open a pull reques
 
 ## Acknowledgements
 
-Built with React, Vite, Tailwind CSS, Framer Motion, Zustand, Recharts, React Router and Lucide.
+Built with React, Vite, Tailwind CSS, Framer Motion, Zustand, React Router and Lucide.
 
 ## License
 

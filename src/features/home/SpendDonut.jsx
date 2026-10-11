@@ -1,5 +1,3 @@
-import {PieChart,Pie,Cell,ResponsiveContainer,Tooltip} from 'recharts';import Card from '../../components/ui/Card.jsx';import {inr} from '../../core/format.js';
-const COL=['#818cf8','#38bdf8','#34d399','#fbbf24','#fb7185','#a78bfa'];
+import Card from '../../components/ui/Card.jsx';import Donut,{DONUT_COLORS} from '../../components/charts/Donut.jsx';import {inr} from '../../core/format.js';
 export default function SpendDonut({ledger}){const m={};ledger.forEach(l=>{m[l.cat]=(m[l.cat]||0)+l.amount});const d=Object.entries(m).map(([name,value])=>({name,value}));
- return <Card><h3 className="font-bold">Where it went</h3><div className="flex items-center gap-3"><div className="h-36 w-36"><ResponsiveContainer><PieChart><Pie data={d} dataKey="value" innerRadius={38} outerRadius={62} stroke="none">{d.map((x,i)=><Cell key={x.name} fill={COL[i%COL.length]}/>)}</Pie><Tooltip formatter={v=>inr(v)} contentStyle={{background:'#0a1030',border:'1px solid #3b4a9a',borderRadius:12}}/></PieChart></ResponsiveContainer></div>
-  <ul className="text-xs">{d.map((x,i)=><li key={x.name}><span style={{color:COL[i%COL.length]}}>●</span> {x.name} {inr(x.value)}</li>)}</ul></div></Card>}
+ return <Card><h3 className="font-bold">Where it went</h3>{d.length?<div className="flex items-center gap-3"><Donut data={d}/><ul className="text-xs">{d.map((x,i)=><li key={x.name}><span style={{color:DONUT_COLORS[i%6]}} aria-hidden>●</span> {x.name} {inr(x.value)}</li>)}</ul></div>:<p className="mt-3 text-sm text-white/70">No spending logged yet. Use “Log spend” to start.</p>}</Card>}

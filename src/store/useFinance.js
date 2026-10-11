@@ -7,7 +7,7 @@ const seed=()=>({day:12,balance:6480,
  income:[{id:'i1',name:'Pocket money',amount:1000,day:22}],
  commitments:[{id:'c1',name:'Phone Plan',amount:399,day:18,icon:'📱',tag:'Recurring'},{id:'c2',name:'Travel Pass',amount:600,day:21,icon:'🚇',tag:'One-time'},{id:'c3',name:'Internet',amount:799,day:28,icon:'📶',tag:'Recurring'}],
  subs:[{id:'s1',name:'Spotify',amount:119,day:14,active:true,icon:'🎧'},{id:'s2',name:'Netflix',amount:249,day:16,active:false,icon:'🎬'},{id:'s3',name:'YouTube Premium',amount:149,day:19,active:true,icon:'▶️'},{id:'s4',name:'Amazon Prime',amount:179,day:23,active:false,icon:'📦'}],
- goals:[{id:'g1',name:'Emergency Fund',icon:'🛟',target:5000,saved:1500,plan:300,within:60},{id:'g2',name:'Goa Trip',icon:'🏖️',target:3000,saved:1900,plan:200,within:60}],
+ goals:[{id:'g1',name:'Emergency Fund',icon:'🛟',target:5000,saved:1500,plan:300,within:90},{id:'g2',name:'Goa Trip',icon:'🏖️',target:3000,saved:1900,plan:200,within:60}],
  forks:[],toast:null});
 export const paceOf=s=>Math.max(60,Math.round(s.ledger.reduce((a,l)=>a+l.amount,0)/Math.max(1,s.day-1)));
 export const snapshot=s=>({day:s.day,balance:s.balance,pace:paceOf(s),subs:s.subs,commitments:s.commitments,goals:s.goals,income:s.income});
@@ -32,4 +32,11 @@ export const useFinance=create(persist((set)=>({...seed(),
  contribute:(id,amt)=>set(s=>({balance:s.balance-amt,goals:s.goals.map(g=>g.id===id?{...g,saved:g.saved+amt,plan:Math.max(0,g.plan-amt)}:g),toast:T(`₹${amt} moved to your goal.`)})),
  nextDay:()=>set(s=>{if(s.day>=30)return s;const p=paceOf(s),due=[...s.commitments,...s.subs.filter(x=>x.active)].filter(b=>b.day===s.day).reduce((a,b)=>a+b.amount,0),inc=s.income.filter(i=>i.day===s.day).reduce((a,b)=>a+b.amount,0);
   return{day:s.day+1,balance:s.balance-p-due+inc,ledger:[...s.ledger,{id:uid(),day:s.day,cat:'Food',amount:p}],forks:s.forks.map(f=>({...f,day:Math.max(f.day,s.day+1)}))}}),
- reset:()=>set(seed())}),{name:'after10-v2',partialize:({toast,...r})=>r}));
+ removeSpend:id=>set(s=>{const l=s.ledger.find(x=>x.id===id);return l?{ledger:s.ledger.filter(x=>x.id!==id),balance:s.balance+l.amount,toast:T(`Removed ₹${l.amount} ${l.cat}. Balance restored.`)}:s}),
+ removeIncome:id=>set(s=>({income:s.income.filter(x=>x.id!==id)})),
+ receiveIncome:id=>set(s=>{const i=s.income.find(x=>x.id===id);return i?{income:s.income.filter(x=>x.id!==id),balance:s.balance+i.amount,toast:T(`Received ₹${i.amount} from ${i.name}.`)}:s}),
+ addCommitment:(name,amount,day)=>set(s=>({commitments:[...s.commitments,{id:uid(),name,amount,day,icon:'🧾',tag:'One-time'}],toast:T(`${name} added to upcoming bills.`)})),
+ removeCommitment:id=>set(s=>({commitments:s.commitments.filter(x=>x.id!==id)})),
+ removeSub:id=>set(s=>({subs:s.subs.filter(x=>x.id!==id)})),
+ removeGoal:id=>set(s=>s.goals.length>1?{goals:s.goals.filter(x=>x.id!==id)}:s),
+ reset:()=>set(seed())}),{name:'after10-v3',partialize:({toast,...r})=>r}));
