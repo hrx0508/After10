@@ -1,2 +1,4 @@
-export default function SectionTitle({icon:I,title,sub,right,color='#a78bfa'}){return <div className="mb-3 flex items-start justify-between gap-3"><div className="flex items-center gap-3">
- {I&&<span className="grid h-10 w-10 place-items-center rounded-xl" style={{background:color+'26',color}}><I size={20}/></span>}<div><h2 className="text-lg font-bold leading-tight">{title}</h2>{sub&&<p className="text-xs text-white/55">{sub}</p>}</div></div>{right}</div>}
+export default function SectionTitle({ icon: I, title, sub, right, color = '#a78bfa' }) {
+    return <div className="mb-3 flex items-start justify-between gap-3"><div className="flex items-center gap-3">
+        {I && <span className="grid h-10 w-10 place-items-center rounded-xl" style={{ background: color + '26', color }}><I size={20} /></span>}<div><h2 className="text-lg font-bold leading-tight">{title}</h2>{sub && <p className="text-xs text-white/55">{sub}</p>}</div></div>{right}</div>
+}

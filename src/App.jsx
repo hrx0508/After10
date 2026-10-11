@@ -1,3 +1,11 @@
-import {HashRouter,Routes,Route,Navigate} from 'react-router-dom';import AppShell from './components/layout/AppShell.jsx';
-import HomePage from './pages/HomePage.jsx';import MultiversePage from './pages/MultiversePage.jsx';import WeatherPage from './pages/WeatherPage.jsx';import SubscriptionsPage from './pages/SubscriptionsPage.jsx';import ChaosPage from './pages/ChaosPage.jsx';import GoalsPage from './pages/GoalsPage.jsx';import CalendarPage from './pages/CalendarPage.jsx';import ActivityPage from './pages/ActivityPage.jsx';
-export default function App(){return <HashRouter><Routes><Route element={<AppShell/>}><Route index element={<HomePage/>}/><Route path="multiverse" element={<MultiversePage/>}/><Route path="weather" element={<WeatherPage/>}/><Route path="subscriptions" element={<SubscriptionsPage/>}/><Route path="chaos" element={<ChaosPage/>}/><Route path="goals" element={<GoalsPage/>}/><Route path="calendar" element={<CalendarPage/>}/><Route path="activity" element={<ActivityPage/>}/><Route path="*" element={<Navigate to="/" replace/>}/></Route></Routes></HashRouter>}
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AppShell from './components/layout/AppShell.jsx';
+import HomePage from './pages/HomePage.jsx';
+import MultiversePage from './pages/MultiversePage.jsx';
+import WeatherPage from './pages/WeatherPage.jsx';
+import SubscriptionsPage from './pages/SubscriptionsPage.jsx';
+import ChaosPage from './pages/ChaosPage.jsx';
+import GoalsPage from './pages/GoalsPage.jsx';
+import CalendarPage from './pages/CalendarPage.jsx';
+import ActivityPage from './pages/ActivityPage.jsx';
+export default function App() { return <HashRouter><Routes><Route element={<AppShell />}><Route index element={<HomePage />} /><Route path="multiverse" element={<MultiversePage />} /><Route path="weather" element={<WeatherPage />} /><Route path="subscriptions" element={<SubscriptionsPage />} /><Route path="chaos" element={<ChaosPage />} /><Route path="goals" element={<GoalsPage />} /><Route path="calendar" element={<CalendarPage />} /><Route path="activity" element={<ActivityPage />} /><Route path="*" element={<Navigate to="/" replace />} /></Route></Routes></HashRouter> }

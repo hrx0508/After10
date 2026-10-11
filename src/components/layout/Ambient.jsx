@@ -1,3 +1,7 @@
-import {useEffect} from 'react';import {useSim} from '../../hooks/useSim.js';import {skyColor} from '../../engine/format.js';
-export default function Ambient(){const {health}=useSim();useEffect(()=>{document.body.style.setProperty('--sky',skyColor(health))},[health]);
- return <div aria-hidden className="pointer-events-none fixed inset-0 -z-0 overflow-hidden"><div className="blob -left-20 -top-20 h-[420px] w-[420px]" style={{background:'var(--sky)'}}/><div className="blob -right-24 top-1/3 h-[380px] w-[380px] bg-violet-700/60" style={{animationDelay:'-6s'}}/><div className="blob bottom-0 left-1/3 h-[340px] w-[340px] bg-indigo-700/50" style={{animationDelay:'-11s'}}/></div>}
+import { useEffect } from 'react';
+import { useSim } from '../../hooks/useSim.js';
+import { skyColor } from '../../engine/format.js';
+export default function Ambient() {
+    const { health } = useSim(); useEffect(() => { document.body.style.setProperty('--sky', skyColor(health)) }, [health]);
+    return <div aria-hidden className="pointer-events-none fixed inset-0 -z-0 overflow-hidden"><div className="blob -left-20 -top-20 h-[420px] w-[420px]" style={{ background: 'var(--sky)' }} /><div className="blob -right-24 top-1/3 h-[380px] w-[380px] bg-violet-700/60" style={{ animationDelay: '-6s' }} /><div className="blob bottom-0 left-1/3 h-[340px] w-[340px] bg-indigo-700/50" style={{ animationDelay: '-11s' }} /></div>
+}

@@ -2,105 +2,129 @@
 
 **See the consequences before you spend.**
 
-A browser-based personal finance simulator for Gen Z. It turns a ₹10,000, 30-day budget into one connected model, so every decision shows its effect on balance, daily allowance, goals, forecast, risk and health score before the money is spent.
+AFTER₹10 is a front-end personal finance simulator for Gen Z. It models a limited ₹10,000 budget over 30 days and shows how a purchase, a subscription, or a surprise expense changes your balance, daily allowance, savings goals, risk, and overall financial health, *before* you commit the money.
 
-> **Status:** hackathon prototype. Runs entirely in the browser with seeded demo data. No backend, no accounts, no real bank connection.
-> **Demo / repository links:** _not provided — add yours here._
-
----
-
-## Preview
-
-Screenshots are not committed to the repository yet. Suggested captures to add under `docs/` and link here:
-
-| Suggested capture | Shows |
+| | |
 |---|---|
-| `docs/home.png` | Home dashboard: stat cards, weather strip, risk-fan chart, health breakdown |
-| `docs/multiverse.png` | Three forks compared against Reality, with the regret meter |
-| `docs/orbit.png` | Orbit view with an asteroid (a considered purchase) |
+| **Type** | Single-page web app (React, runs entirely in the browser) |
+| **Live demo** | https://after10.vercel.app/ |
+| **Repository** | https://github.com/hrx0508/After10 |
+| **Status** | Hackathon prototype, `v1.0.0` (from `package.json`) |
 
 ---
 
-## Overview
+## Visual Preview
 
-Most budgeting apps log what already happened. AFTER₹10 answers forward-looking questions instead:
+> No screenshots are committed yet. Add images to `docs/screenshots/` and replace the placeholders below. The most useful shots for judges:
 
-- Can I afford this without hurting my essentials?
-- How much can I safely spend per day?
-- What happens if something unexpected hits?
-- Will I still reach my savings goal?
+| Screen | Why it matters |
+|---|---|
+| `![alt text](image.png)` | Dashboard: balance, safe daily spend, health, risk, weather strip |
+| `![alt text](image-1.png)` | Three scenarios (Buy Now / Wait 2 Weeks / Cheaper) with deltas |
+| `![alt text](image-2.png)` | 30-day "money weather" forecast and storm shield |
+| `![alt text](image-3.png)` | Add Money modal with live preview of consequences |
+| `![alt text](image-4.png)` | Subscriptions Page |
+| `![alt text](image-5.png)` | Chaos Cards |
+| `![alt text](image-6.png)` | Saving Goals Page |
+| `![alt text](image-7.png)` | Calendar |
+| `![alt text](image-8.png)` | Activity Page |
 
-**Intended users:** students and early earners living on a fixed monthly allowance or stipend.
+---
 
-## Problem and Approach
+## Project Overview
 
-Fixed allowances run out because recurring costs are easy to forget, daily spending feels small, and purchases are judged in isolation. Dividing ₹10,000 by 30 ignores bills and savings.
+AFTER₹10 is for students and early earners who live on a fixed allowance or stipend. You start on Day 12 of a 30-day month with ₹6,480 left of ₹10,000, a set of upcoming bills, four subscriptions, and two savings goals. You can then:
 
-The app addresses this with a single pure function, `simulate(state, decisions)` in `src/core/engine.js`. Every screen reads its output, so a change anywhere (a purchase, a frozen subscription, new income, a shock) updates every number consistently. Hypothetical decisions are passed as an argument and never modify the saved state until committed.
+- test a purchase as a **simulation** without changing your real numbers,
+- see every dashboard metric update together,
+- **commit** the decision (it becomes part of your month) or **discard** it.
 
-> This is an educational/hackathon model, not financial advice. The figures come from a simplified simulation, not from real transaction data.
+All data is seeded demo data stored in your browser. There is no backend and no bank connection.
 
-## Features
+## Problem Statement
+
+Most budgeting tools are post-mortem loggers: they show where money went after it is gone. A flat "₹10,000 ÷ 30 days" figure also ignores rent, recurring subscriptions, and savings commitments, so a student can look fine on Day 12 and be out of money by Day 25.
+
+This project is a prototype built for a hackathon brief about helping Gen Z manage a ₹10,000 / 30-day budget with visible, interconnected consequences. It is a demonstration of the idea, not a validated product, and the README makes no claims about user research or market data.
+
+## Solution and Approach
+
+One pure function, `simulate(state, decisions)`, computes every number the UI shows. Pages are thin views over it. A hypothetical decision is passed in as an extra argument, so a "what if" and reality run through identical logic and can be compared side by side.
+
+| Pain point | How the app addresses it |
+|---|---|
+| Flat daily budgets ignore bills | Safe Daily Spend subtracts upcoming bills, active subscriptions and goal contributions first |
+| Impulse purchases hide their cost | Multiverse simulates a purchase and shows the change in daily spend, month-end balance, goal progress and survival odds |
+| Subscriptions drain quietly | Subscription Radar shows how many days of runway you gain by pausing each one |
+| Surprise expenses | Chaos Cards preview an emergency's impact before you apply it |
+| Risk is abstract | Risk is shown as a survival probability and as a 30-day weather forecast |
+
+## Key Features
 
 All features below are implemented in the current code.
 
-| Feature | What it does |
-|---|---|
-| **Home dashboard** | Balance, safe daily spend, first goal progress, health score, risk level, 30-day weather strip, projected balance chart, health breakdown, spending-by-category donut, upcoming bills and income, generated insights. |
-| **Money Multiverse** | Enter a purchase and run "Run simulation" to create three forks: *Buy now*, *Wait 2 weeks*, *Cheaper option* (60% of the price). Each fork shows safe daily spend, month-end balance, goal ETA delay, health and risk as deltas against Reality, plus a regret meter ("costs X days of safe spending"). Up to 3 forks at once; commit one or discard. |
-| **Money Weather** | Each future day is rated Good / Okay / Rain / Storm from projected cushion (days of spending left after goal money). Bills appear as markers; forks can be selected to see which days get worse. A storm-shield bar shows whether a surprise ₹1,000 is absorbed. |
-| **Risk fan chart** | Dependency-free SVG chart of the likely balance range (10th to 90th percentile) from 300 simulated months, with Reality and fork lines overlaid and a hover readout. |
-| **Can I afford it?** | On the Multiverse page, the amount slider gives an instant Yes / Risky / No verdict and, when possible, the cheapest fix (freeze one subscription, or take the 60% option). |
-| **Ripple effect** | Selecting a fork reveals the consequence chain in sequence: month-end balance → safe daily spend → goal ETA → survival → health, each with its delta. |
-| **Transactions** | Ledger for spending, scheduled income (mark received or cancel) and bills. Deleting a logged spend restores the balance. |
-| **Add money / Log spend** | Add income received today or scheduled for a later day; log spending by category. Daily pace is derived from logged spending. |
-| **Subscriptions** | Toggle, multi-select and pause subscriptions, with the runway gain shown before pausing. Add new subscriptions. |
-| **Chaos Cards** | Preview the impact of shocks (repairs, refunds, freelance payout, a "Worst week" stress test) on month-end balance, daily spend, survival and health, then optionally apply them. |
-| **Savings Goals** | Progress rings, ETA against a target window, "days unlocked" framing, contribute ₹500, create new goals. |
-| **Days of Life** | Converts any price into days of runway. |
-| **Orbit** | Visual metaphor: balance is the sun, goals are planets, subscriptions are moons, a slider adds a purchase as an asteroid and goal orbits move with their ETA. |
-| **Reactive background** | The page background colour shifts with the health score. |
-| **Persistence** | State is saved in `localStorage` (key `after10-v2`). |
+- **Dashboard (Home):** total balance (with hide toggle and balance-history sparkline), safe daily spend, primary savings goal ring, financial health tier, risk level, weather strip, and a health breakdown with a "Why did it change?" note.
+- **Money Multiverse:** enter an item and price, then compare three scenarios: *Buy Now*, *Wait 2 Weeks*, and a *Cheaper* alternative. Each card shows changes in safe daily spend, month-end balance, goal progress and risk. **Commit This Decision** applies the selected one; **Discard** clears them with a particle effect. The Multiverse page adds a projected-balance chart and a Regret Meter (cost in days of safe spending, and goal delay).
+- **Money Weather:** a 30-day strip (Good / Okay / Rain / Storm) derived from projected balance. When a scenario is selected, days that get worse are flagged. A storm-shield bar shows your lowest projected balance and whether a ₹1,000 surprise is absorbed.
+- **Subscriptions:** select subscriptions and pause them in one action; per-subscription freeze/resume with the runway change shown.
+- **Chaos Cards:** six preset shocks (e.g. Phone Repair −₹2,500, Freelance Payment +₹1,500). "Simulate Now" opens a before/after preview; applying it updates the balance and logs a transaction.
+- **Savings Goals:** progress rings, ETA that reacts to spending, **Add ₹500**, adjust, and create goals.
+- **Add Money:** add income or log an expense, with a live preview of the new balance, safe daily spend and survival odds.
+- **Calendar:** October 2026 grid with weather, bills, and income/expense markers, plus a day detail panel and projected-balance chart.
+- **Activity:** income/spending totals, balance history chart, spending by category, filterable transaction list.
+- **Next day:** advances the month one day, deducting your daily pace and any bills due.
+- **Settings:** daily spending pace slider and **Reset demo data**.
+- **Persistence:** state is saved to `localStorage`.
+
+## Innovation and Unique Value
+
+- **One engine, many views.** Because every screen calls the same `simulate()`, a single decision changes the dashboard, forecast, goals, and health score together. This is what makes consequences "interconnected" rather than a set of separate widgets.
+- **Comparable scenarios.** The Monte Carlo step uses a pre-generated, fixed set of random numbers (seeded), so scenarios are judged against the *same* random futures. Differences between scenarios come from the decision, not from sampling noise, and results are deterministic between renders.
+- **Risk as a probability.** Instead of an arbitrary score, survival odds come from 300 simulated months (see below).
+- **Preview-first interactions.** Add Money, Chaos Cards, and Multiverse all show consequences before applying them.
+
+This is a client-side prototype built on simplified assumptions; the value is in the design of the interaction, not in financial accuracy.
 
 ## How It Works
 
 ```mermaid
 flowchart LR
-  A[User action<br/>log spend, add money, fork, freeze, shock] --> B[Zustand store<br/>useFinance]
-  B --> C[snapshot of state]
-  C --> D["simulate(state, decisions)"]
-  H[Hypothetical fork / shock / freeze] --> D
-  D --> E[Curve, weather, survival, health, goal ETAs]
-  E --> F[Dashboard, Multiverse, Weather, Subscriptions, Chaos, Goals, Orbit]
+  A[User action<br/>fork purchase · add money · pause sub · chaos card] --> B[Zustand store<br/>persisted state]
+  B --> C["simulate(state, decisions)"]
+  A -. hypothetical decision .-> C
+  C --> D[Safe daily spend · runway · weather<br/>survival % · health · goal ETA]
+  D --> E[Pages & features render deltas]
+  E -->|Commit / Apply| B
 ```
 
-Inside `simulate()`:
+### The model (`src/engine/simulate.js`)
 
-1. **Safe daily spend** = (balance + incoming money − upcoming bills − goal reserve − decisions) ÷ days left.
-2. **Balance curve** deducts daily pace, bills and decisions per day and adds scheduled income.
-3. **Monte Carlo:** 300 paths vary daily spend (70–130% of pace) and add a 5% daily chance of a ₹300–₹1,500 shock. A fixed random seed is reused, so scenarios stay comparable. Survival is the share of paths that never go below ₹0.
-4. **Health score (0–100)** = Budget Sustainability (35) + Commitment Coverage (20) + Emergency Buffer (25) + Savings Progress (20). Each component returns a plain-language explanation shown in the UI.
-5. **Goal ETA** is estimated from the reserved plan plus surplus cash.
-
-Daily pace is the total of logged spending divided by days elapsed (minimum ₹60).
+- **Safe daily spend** = (balance − upcoming bills − goal reserve − decisions) ÷ days left. Upcoming bills are commitments plus *active* subscriptions due today or later. Goal reserve is each goal's monthly plan, capped at what remains to reach its target.
+- **Projected balance** per day = balance − (daily pace × days) − bills due so far − decisions made so far. **Runway** = days left + month-end balance ÷ daily pace.
+- **Weather** per day uses cushion days = (projected balance − goal reserve) ÷ pace: below 0 = Storm, below 3 = Rain, below 8 = Okay, otherwise Good.
+- **Survival %** = share of 300 simulated months that never drop below ₹0. Each simulated day spends 0.7–1.3× your pace and has a 5% chance of a ₹300–₹1,500 unexpected expense. These parameters are assumptions, not data.
+- **Health score (0–100)** = 35% budget sustainability (survival) + 20% commitment coverage + 25% emergency buffer (month-end balance relative to ₹2,000) + 20% savings progress. Tiers: Excellent ≥ 80, Good ≥ 60, Fair ≥ 40, otherwise Poor.
+- **Risk level:** survival ≥ 75% = Low, ≥ 45% = Medium, otherwise High. Scenario cards use Good ≥ 60%, Moderate ≥ 40%, otherwise Critical.
+- **Goal ETA** = remaining amount ÷ monthly contribution capacity × 30, where capacity is the funded reserve plus a share of any surplus.
+- **Scenarios:** *Wait 2 Weeks* moves the purchase 14 days later (capped at Day 30), assumes 30% lower spending until then, and weights the purchase less in today's safe daily spend. *Cheaper* is 40% of the price, rounded to the nearest ₹10.
 
 ## Technology Stack
 
-| Technology | Purpose | Where used |
+| Technology | Purpose | Where or how it is used |
 |---|---|---|
-| React 19 | UI | All screens (`src/features`, `src/components`) |
-| Vite | Dev server and build | `vite.config.js`, npm scripts |
-| Tailwind CSS v4 (`@tailwindcss/vite`) | Styling | Utility classes, plus a few custom classes in `src/index.css` |
-| Framer Motion | Animation | Animated numbers, rings, fork cards, page and modal transitions |
-| React Router (HashRouter) | Routing | `src/App.jsx` (8 lazy-loaded routes; deep links work on any static host) |
-| Zustand (`persist`) | State and persistence | `src/store/useFinance.js` |
-| Vitest | Unit tests | `src/core/engine.test.js` |
-| Lucide React | Icons | Sidebar, buttons, weather |
-| Google Fonts (Space Grotesk) | Typography | Loaded from `index.html` (needs internet) |
+| React `^19.3` | UI library | All components in `src/` |
+| Vite `^8.3` + `@vitejs/plugin-react` | Dev server and bundler | `vite.config.js`, scripts `dev` / `build` / `preview` |
+| Tailwind CSS `^4.3` (`@tailwindcss/vite`) | Styling | Utility classes; theme tokens and glass/blob/shimmer styles in `src/styles/index.css` |
+| Framer Motion `^14.1` | Animation | Page transitions, animated numbers, rings, charts, modals, nav pill |
+| React Router DOM `^7.18` | Routing | `HashRouter` with 8 routes in `src/App.jsx` |
+| Zustand `^5.0` (+ `persist`) | State management | Slice-based store in `src/store/`, saved to `localStorage` |
+| Lucide React `^1.55` | Icons | Navigation, cards, weather, buttons |
+| Hand-written SVG | Charts | `AreaChart` and `Sparkline`; no charting library |
+| Google Fonts (Space Grotesk) | Typography | Loaded by `index.html` (external, needs internet) |
 
-Dependencies use caret ranges in `package.json`; no lockfile is included, so run `npm install` once and commit the generated `package-lock.json`. Charts are plain SVG, so there is no charting dependency.
+No backend, database, or third-party API is used.
 
-## Project Structure
+## Architecture and Project Structure
 
 ```text
 after10/
@@ -108,31 +132,39 @@ after10/
 ├── package.json
 ├── vite.config.js
 └── src/
-    ├── main.jsx, App.jsx, index.css
-    ├── core/            engine.js (simulate), verdict.js, format.js, engine.test.js
-    ├── store/           useFinance.js (state + actions)
-    ├── hooks/           useSim.js (useSim, useForkRows, useScenario)
+    ├── main.jsx, App.jsx          # entry + router
+    ├── engine/                    # pure logic, no React
+    │   ├── simulate.js            #   the financial model
+    │   ├── insights.js            #   Quick Insights text
+    │   ├── history.js             #   balance history from transactions
+    │   └── format.js              #   ₹ formatting, tiers, risk labels
+    ├── data/seed.js               # demo state, categories, chaos cards
+    ├── store/                     # Zustand store (index.js + slices/)
+    │   └── slices/                #   ui · money · scenarios · subs · goals
+    ├── hooks/useSim.js            # memoised views over the engine
     ├── components/
-    │   ├── ui/          Card, Btn, Num, Ring, Delta, Modal, PageHead
-    │   ├── layout/      Shell, Sidebar, Topbar
-    │   └── charts/      ForecastChart, Donut (SVG)
-    └── features/
-        ├── home/        Home, StatCards, HealthBreakdown, DaysOfLife, SpendDonut, Upcoming, Insights
-        ├── multiverse/  Multiverse, ForkCard, Verdict, Ripple
-        ├── ledger/      Ledger, Lists
-        ├── weather/     Weather, WeatherStrip, weatherMeta
-        ├── subscriptions/ Subscriptions
-        ├── chaos/       Chaos
-        ├── goals/       Goals
-        ├── orbit/       Orbit
-        └── quickadd/    QuickAddModal
+    │   ├── ui/                    # GlassCard, ProgressRing, DeltaChip, Modal, Toast…
+    │   ├── charts/                # AreaChart, Sparkline
+    │   └── layout/                # AppShell, Sidebar, Topbar, MobileNav, Ambient…
+    ├── features/                  # one folder per feature
+    │   └── dashboard · weather · multiverse · subscriptions · chaos
+    │       goals · money · calendar · activity · settings
+    ├── pages/                     # thin route pages composing features
+    └── styles/index.css
 ```
 
-Each feature folder owns its screen; shared pieces live in `components/`; all numbers come from `core/engine.js`.
+Dependencies flow one way: **pages → features → components / hooks → store → engine**. The engine imports nothing from React.
 
 ## Getting Started
 
-**Prerequisites:** Node.js 20.19+ (or 22.12+) and npm. No database, API keys or environment variables are needed.
+### Prerequisites
+
+- Node.js `^20.19.0` or `>=22.12.0` (required by Vite 8)
+- npm
+
+No environment variables, accounts, or API keys are needed.
+
+### Installation and running
 
 ```bash
 git clone <your-repo-url>
@@ -141,84 +173,93 @@ npm install
 npm run dev
 ```
 
-Open the local URL Vite prints.
+Open the URL Vite prints (usually `http://localhost:5173`).
 
-| Command | Purpose |
+### Scripts
+
+| Command | Description |
 |---|---|
-| `npm run dev` | Start the dev server |
+| `npm run dev` | Start the development server |
 | `npm run build` | Production build to `dist/` |
 | `npm run preview` | Serve the production build locally |
-| `npm test` | Run the Vitest unit tests |
 
 ## Usage
 
-Suggested demo flow:
-
-1. **Add money** or **Log spend** from the top bar and watch the dashboard update.
-2. Open **Money Multiverse**, drag the amount and read the **Yes / Risky / No** verdict, choose **Run simulation**, compare the three forks, watch the **ripple effect**, then **Commit** one.
-   Review or undo entries on **Transactions**.
-3. Open **Money Weather** and select a fork to see which days worsen.
-4. Open **Subscriptions**, select some and see the runway gain, then **Pause selected**.
-5. Open **Chaos Cards**, preview a shock, then apply it or close.
-6. Open **Orbit** and drag the purchase slider.
-
-Use **Next day** to advance the month and **Reset** (circular arrow) to restore the seeded demo state.
+1. **Home:** read your safe daily spend and health tier.
+2. **Multiverse panel:** keep "Concert Ticket / ₹1,500" or set your own item and price, press **Run Simulation**, click a scenario card, and compare the changes. Press **Commit This Decision** to apply it or **Discard** to drop it.
+3. **Subscriptions widget:** toggle subscriptions, press **Pause Selected**, and watch safe daily spend rise.
+4. **Chaos Cards:** pick a card, press **Simulate Now**, review the preview, and **Apply to my month**.
+5. **Add Money** (top bar): log income or an expense.
+6. **Next day** (top bar): move the month forward.
+7. **Settings → Reset demo data:** restore the original state.
 
 ## Security and Privacy
 
-- Data stays in the browser's `localStorage`; nothing is sent to a server.
-- No authentication, secrets or third-party APIs are used (apart from loading Google Fonts).
-- Not intended for real financial data.
+- There is no authentication, server, or network API. Data never leaves the browser.
+- State is stored **unencrypted** in `localStorage` under the key `after10-v2`.
+- The only external request is the Google Fonts stylesheet in `index.html`.
+- This is a prototype and has not been security-reviewed.
 
-## Accessibility and Performance
+## Challenges and Technical Decisions
 
-- Skip-to-content link, labelled navigation landmarks, labelled form fields and icon buttons, tabs with ARIA roles, and a dialog with `Escape` to close.
-- Toasts are announced via `role="status"`; charts expose text summaries and a hover/readout line.
-- Reduced motion is respected (Framer Motion `reducedMotion="user"` plus a CSS media query).
-- Text contrast was raised for secondary labels; the dark theme has not been audited with a contrast tool.
-- Routes are lazy-loaded and charts are hand-written SVG, which keeps the bundle small. No bundle-size or Lighthouse figures have been measured.
+These are observable design choices in the code:
 
-## Testing
+- **Single source of truth for numbers.** Centralising the model in `simulate()` avoids drift between screens.
+- **Deterministic Monte Carlo.** A fixed seed and shared random numbers keep scenario comparisons stable.
+- **Slice-based store.** Money, scenarios, subscriptions, goals, and UI state live in separate slices, composed in `src/store/index.js`.
+- **Transaction log as ledger.** Every balance change logs a transaction, so balance history can be rebuilt from the log.
+- **Hash routing.** `HashRouter` lets the static build run on any host without rewrite rules.
+- **No chart library.** A small custom SVG chart keeps the bundle small and allows the animated "ghost line" and hover tooltip.
+- **Reduced motion.** `index.css` disables animations when the user prefers reduced motion.
 
-`npm test` runs Vitest tests in `src/core/engine.test.js` covering the simulation (safe daily spend, curve, bills, income, decisions, determinism, health range, goal ETA), formatters, tiers and the affordability verdict.
+## Limitations and Known Issues
 
-Verification status: the engine assertions were executed with Node in the authoring environment and every `.js`/`.jsx` file was syntax-checked and had its relative imports resolved. Vitest, `npm install` and `npm run build` could not be run there (no network), so run them once locally.
-
-## Technical Decisions
-
-- **Single pure engine:** one function feeds every screen, which keeps views consistent and makes "what-if" views cheap (call it with extra decisions).
-- **Common random numbers:** the Monte Carlo noise is generated once with a fixed seed, so differences between scenarios reflect the decision, not random variation.
-- **Hypothetical vs committed:** forks, shocks and subscription freezes are previewed through `useForkRows` / `useScenario` without touching the store.
-- **Hooks as the data layer:** screens call `useSim` and friends rather than computing finances themselves.
-
-## Limitations
-
-- **Not yet run in a browser:** the app was not installed, built or opened where it was written (see Testing). Expect to fix small dependency or version issues on first run.
-- Unit tests cover the engine only; there are no component or end-to-end tests, linting or CI.
-- Seeded demo data only; no bank, UPI or SMS import.
-- The risk model is simplified (uniform spending variation, flat shock probability) and is illustrative, not predictive.
-- "Next day" deducts the average pace rather than real spending.
-- Single user, single device; no sync.
-- Orbit is a visual metaphor; the asteroid's position is decorative.
-- Layout is responsive by design but has not been tested across devices.
+- **Demo data only.** A single seeded user; no real accounts or bank/UPI integration.
+- **Calendar is fixed to October 2026**, and dates are labelled "Oct N".
+- **Simplified model.** Spending is a single user-set daily pace; the shock probability and amounts in the Monte Carlo are assumptions. Outputs are illustrative and not financial advice.
+- **Primary goal only** drives the stat card, Savings Goal widget and scenario "Goal Progress" (the first goal in the list).
+- **No automated tests or linting** are configured.
+- **No screenshots, license, or deployment** are included yet.
+- The month ends at Day 30; there is no multi-month mode or undo.
+- The production bundle is ~484 kB (about 154 kB gzipped).
 
 ## Future Improvements
 
-- Component and end-to-end tests; ESLint and CI.
-- Parse pasted UPI/bank SMS into the ledger.
-- Cooling-off timer on forks ("sleep on it for 24h").
-- Shareable "regret receipt" image.
-- Time scrubber across the 30 days.
-- Editing (not just adding/removing) bills and income.
+- Unit tests for `simulate()` (health, ETA, scenario edge cases), plus component tests.
+- Month/date handling that is not hard-coded, and multi-month support.
+- Per-category daily pace learned from the transaction log, instead of one global pace.
+- Editable commitments and subscriptions in the UI.
+- Export and import of data, and optional backend sync.
+- Code-splitting routes to reduce the initial bundle.
+
+## Testing and Quality Assurance
+
+- No automated test suite is included.
+- `npm run build` completes successfully (Vite 8, Node 22).
+- The engine's outputs were spot-checked with ad hoc Node scripts during development; those scripts are not part of the repository.
+- The UI has not been through formal cross-browser or accessibility testing.
+
+## Deployment
+
+The app is a static site. No deployment is configured yet.
+
+```bash
+npm run build      # outputs dist/
+```
+
+Upload `dist/` to any static host (Netlify, Vercel, GitHub Pages, etc.). Hash routing means no server rewrite rules are required. No environment variables are needed.
 
 ## Contributing
 
-Fork, create a branch, make changes, run `npm run build`, and open a pull request. No formal guidelines exist yet.
+1. Fork and clone the repository.
+2. Create a branch: `git checkout -b feature/your-change`.
+3. Run `npm install` and `npm run dev`; verify with `npm run build`.
+4. Commit and open a pull request describing the change.
 
 ## Acknowledgements
 
-Built with React, Vite, Tailwind CSS, Framer Motion, Zustand, React Router and Lucide.
+Built with [React](https://react.dev), [Vite](https://vite.dev), [Tailwind CSS](https://tailwindcss.com), [Framer Motion](https://www.framer.com/motion/), [React Router](https://reactrouter.com), [Zustand](https://zustand.docs.pmnd.rs) and [Lucide](https://lucide.dev). Typography: Space Grotesk via Google Fonts. The dashboard layout follows a concept mockup supplied for this project.
 
 ## License
 
-No license has been specified. Until one is added, all rights are reserved by the authors.
+No license has been specified. Until one is added, all rights are reserved by the authors by default. Add a `LICENSE` file to make the terms explicit.

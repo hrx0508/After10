@@ -1,14 +1,26 @@
-import {useState} from 'react';import {motion} from 'framer-motion';import GlassCard from '../../components/ui/GlassCard.jsx';import SectionTitle from '../../components/ui/SectionTitle.jsx';import {CalendarDays} from 'lucide-react';import AreaChart from '../../components/charts/AreaChart.jsx';
-import {useFin} from '../../store/index.js';import {useSim} from '../../hooks/useSim.js';import {WEATHER,weatherFor} from '../weather/weatherMeta.js';import {inr} from '../../engine/format.js';
-const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-export default function CalendarGrid(){const {day,tx}=useFin(),sim=useSim(),[sel,setSel]=useState(day),lead=new Date(2026,9,1).getDay();
- const bills=d=>sim.bills.filter(b=>b.day===d),txs=d=>tx.filter(t=>t.day===d),dt=txs(sel),proj=sel>=day?sim.curve[sel-day]:null;
- return <div className="grid gap-5 xl:grid-cols-[1fr_340px]"><GlassCard><SectionTitle icon={CalendarDays} color="#38bdf8" title="October 2026" sub="Weather, bills and activity on one calendar"/>
-  <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] text-white/50">{DOW.map(d=><span key={d}>{d}</span>)}</div>
-  <div className="mt-1.5 grid grid-cols-7 gap-1.5">{Array.from({length:lead},(_,i)=><span key={'b'+i}/>)}{Array.from({length:30},(_,i)=>{const d=i+1,M=WEATHER[weatherFor(d,day,sim)],b=bills(d),t=txs(d);
-   return <motion.button key={d} whileHover={{scale:1.06}} onClick={()=>setSel(d)} className="relative aspect-square rounded-xl border p-1 text-left" style={{background:M.c+(d<day?'0d':'22'),borderColor:sel===d?'#fff':d===day?M.c:'#ffffff14'}}>
-    <span className="text-xs font-bold">{d}</span><M.I size={14} color={M.c} className="absolute right-1 top-1"/><div className="absolute bottom-1 left-1 flex gap-0.5">{b.length>0&&<i className="h-1.5 w-1.5 rounded-full bg-sky-400"/>}{t.some(x=>x.type==='in')&&<i className="h-1.5 w-1.5 rounded-full bg-emerald-400"/>}{t.some(x=>x.type==='out')&&<i className="h-1.5 w-1.5 rounded-full bg-rose-400"/>}</div></motion.button>})}</div>
-  <p className="mt-3 flex gap-4 text-[11px] text-white/55"><span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-sky-400"/>Bill</span><span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-emerald-400"/>Money in</span><span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-rose-400"/>Money out</span></p></GlassCard>
-  <div className="space-y-5"><GlassCard><p className="text-lg font-bold">Oct {sel}{sel===day?' · Today':''}</p><p className="text-xs text-white/55">{sel<day?'Past day':proj!=null?`Projected balance ${inr(proj)}`:''}</p>
-   <div className="mt-3 space-y-2 text-sm">{bills(sel).map(b=><p key={b.id} className="flex justify-between"><span>Bill: {b.name}</span><b>{inr(b.amount)}</b></p>)}{dt.map(t=><p key={t.id} className="flex justify-between"><span>{t.label}</span><b className={t.type==='in'?'text-emerald-300':'text-rose-300'}>{t.type==='in'?'+':'-'}{inr(t.amount)}</b></p>)}{!bills(sel).length&&!dt.length&&<p className="text-white/50">Nothing scheduled.</p>}</div></GlassCard>
-   <GlassCard><p className="mb-2 text-sm font-bold">Projected balance</p><AreaChart series={[{name:'Reality',color:'#22d3a0',data:sim.curve}]} startDay={day} height={180}/></GlassCard></div></div>}
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import GlassCard from '../../components/ui/GlassCard.jsx';
+import SectionTitle from '../../components/ui/SectionTitle.jsx';
+import { CalendarDays } from 'lucide-react';
+import AreaChart from '../../components/charts/AreaChart.jsx';
+import { useFin } from '../../store/index.js';
+import { useSim } from '../../hooks/useSim.js';
+import { WEATHER, weatherFor } from '../weather/weatherMeta.js';
+import { inr } from '../../engine/format.js';
+const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+export default function CalendarGrid() {
+  const { day, tx } = useFin(), sim = useSim(), [sel, setSel] = useState(day), lead = new Date(2026, 9, 1).getDay();
+  const bills = d => sim.bills.filter(b => b.day === d), txs = d => tx.filter(t => t.day === d), dt = txs(sel), proj = sel >= day ? sim.curve[sel - day] : null;
+  return <div className="grid gap-5 xl:grid-cols-[1fr_340px]"><GlassCard><SectionTitle icon={CalendarDays} color="#38bdf8" title="October 2026" sub="Weather, bills and activity on one calendar" />
+    <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] text-white/50">{DOW.map(d => <span key={d}>{d}</span>)}</div>
+    <div className="mt-1.5 grid grid-cols-7 gap-1.5">{Array.from({ length: lead }, (_, i) => <span key={'b' + i} />)}{Array.from({ length: 30 }, (_, i) => {
+      const d = i + 1, M = WEATHER[weatherFor(d, day, sim)], b = bills(d), t = txs(d);
+      return <motion.button key={d} whileHover={{ scale: 1.06 }} onClick={() => setSel(d)} className="relative aspect-square rounded-xl border p-1 text-left" style={{ background: M.c + (d < day ? '0d' : '22'), borderColor: sel === d ? '#fff' : d === day ? M.c : '#ffffff14' }}>
+        <span className="text-xs font-bold">{d}</span><M.I size={14} color={M.c} className="absolute right-1 top-1" /><div className="absolute bottom-1 left-1 flex gap-0.5">{b.length > 0 && <i className="h-1.5 w-1.5 rounded-full bg-sky-400" />}{t.some(x => x.type === 'in') && <i className="h-1.5 w-1.5 rounded-full bg-emerald-400" />}{t.some(x => x.type === 'out') && <i className="h-1.5 w-1.5 rounded-full bg-rose-400" />}</div></motion.button>
+    })}</div>
+    <p className="mt-3 flex gap-4 text-[11px] text-white/55"><span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-sky-400" />Bill</span><span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-emerald-400" />Money in</span><span><i className="mr-1 inline-block h-2 w-2 rounded-full bg-rose-400" />Money out</span></p></GlassCard>
+    <div className="space-y-5"><GlassCard><p className="text-lg font-bold">Oct {sel}{sel === day ? ' · Today' : ''}</p><p className="text-xs text-white/55">{sel < day ? 'Past day' : proj != null ? `Projected balance ${inr(proj)}` : ''}</p>
+      <div className="mt-3 space-y-2 text-sm">{bills(sel).map(b => <p key={b.id} className="flex justify-between"><span>Bill: {b.name}</span><b>{inr(b.amount)}</b></p>)}{dt.map(t => <p key={t.id} className="flex justify-between"><span>{t.label}</span><b className={t.type === 'in' ? 'text-emerald-300' : 'text-rose-300'}>{t.type === 'in' ? '+' : '-'}{inr(t.amount)}</b></p>)}{!bills(sel).length && !dt.length && <p className="text-white/50">Nothing scheduled.</p>}</div></GlassCard>
+      <GlassCard><p className="mb-2 text-sm font-bold">Projected balance</p><AreaChart series={[{ name: 'Reality', color: '#22d3a0', data: sim.curve }]} startDay={day} height={180} /></GlassCard></div></div>
+}

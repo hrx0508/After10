@@ -1,7 +1,15 @@
-import {useMemo} from 'react';import Modal from '../../components/ui/Modal.jsx';import Button from '../../components/ui/Button.jsx';import DeltaChip from '../../components/ui/DeltaChip.jsx';
-import {useCore,useSim} from '../../hooks/useSim.js';import {simulate} from '../../engine/simulate.js';import {useFin} from '../../store/index.js';import {inr} from '../../engine/format.js';
-export default function ImpactModal({item,onClose}){const c=useCore(),base=useSim(),shock=useFin(s=>s.shock),a=useMemo(()=>simulate({...c,balance:c.balance+item.delta}),[c,item]);
- const rows=[['Balance',inr(c.balance+item.delta),item.delta,'₹',0],['Safe daily spend',inr(a.sds),a.sds-base.sds,'₹',0],['Day 30 balance',inr(a.end),a.end-base.end,'₹',0],['Survival odds',`${a.survival.toFixed(0)}%`,a.survival-base.survival,'%',0],['Health score',a.health,a.health-base.health,'',0]];
- return <Modal open onClose={onClose} title={`If this happens: ${item.name}`}><p className="mb-4 text-sm text-white/60">{item.blurb} Here is how the month changes. Nothing is applied until you confirm.</p>
-  <div className="space-y-2.5">{rows.map(([l,v,d,p])=><div key={l} className="flex justify-between rounded-xl bg-black/25 px-3 py-2 text-sm"><span className="text-white/65">{l}</span><span><b>{v}</b><DeltaChip v={d} pre={p==='₹'?'₹':''} suf={p==='%'?'%':''}/></span></div>)}</div>
-  <div className="mt-5 flex gap-3"><Button className="flex-1" onClick={()=>{shock(item.name,item.delta);onClose()}}>Apply to my month</Button><Button variant="ghost" onClick={onClose}>Cancel</Button></div></Modal>}
+import { useMemo } from 'react';
+import Modal from '../../components/ui/Modal.jsx';
+import Button from '../../components/ui/Button.jsx';
+import DeltaChip from '../../components/ui/DeltaChip.jsx';
+import { useCore, useSim } from '../../hooks/useSim.js';
+import { simulate } from '../../engine/simulate.js';
+import { useFin } from '../../store/index.js';
+import { inr } from '../../engine/format.js';
+export default function ImpactModal({ item, onClose }) {
+    const c = useCore(), base = useSim(), shock = useFin(s => s.shock), a = useMemo(() => simulate({ ...c, balance: c.balance + item.delta }), [c, item]);
+    const rows = [['Balance', inr(c.balance + item.delta), item.delta, '₹', 0], ['Safe daily spend', inr(a.sds), a.sds - base.sds, '₹', 0], ['Day 30 balance', inr(a.end), a.end - base.end, '₹', 0], ['Survival odds', `${a.survival.toFixed(0)}%`, a.survival - base.survival, '%', 0], ['Health score', a.health, a.health - base.health, '', 0]];
+    return <Modal open onClose={onClose} title={`If this happens: ${item.name}`}><p className="mb-4 text-sm text-white/60">{item.blurb} Here is how the month changes. Nothing is applied until you confirm.</p>
+        <div className="space-y-2.5">{rows.map(([l, v, d, p]) => <div key={l} className="flex justify-between rounded-xl bg-black/25 px-3 py-2 text-sm"><span className="text-white/65">{l}</span><span><b>{v}</b><DeltaChip v={d} pre={p === '₹' ? '₹' : ''} suf={p === '%' ? '%' : ''} /></span></div>)}</div>
+        <div className="mt-5 flex gap-3"><Button className="flex-1" onClick={() => { shock(item.name, item.delta); onClose() }}>Apply to my month</Button><Button variant="ghost" onClick={onClose}>Cancel</Button></div></Modal>
+}

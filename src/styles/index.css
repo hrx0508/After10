@@ -1,17 +1,112 @@
 @import "tailwindcss";
-@property --sky{syntax:'<color>';inherits:true;initial-value:#0d5c55}
-@theme{--color-navy-950:#050818;--color-navy-900:#0a1030;--color-navy-800:#111a4a;--color-navy-700:#1a2570}
-:root{color-scheme:dark}
-body{--sky:#0d5c55;transition:--sky 1.4s ease;margin:0;color:#e6e9ff;font-family:'Space Grotesk',system-ui,sans-serif;min-height:100vh;background:#050818}
-.glass{background:linear-gradient(145deg,rgba(32,42,120,.42),rgba(10,16,52,.62));border:1px solid rgba(130,140,255,.16);backdrop-filter:blur(14px);transition:border-color .3s,box-shadow .3s}
-.glass:hover{border-color:rgba(160,150,255,.35)}
-.blob{position:fixed;border-radius:50%;filter:blur(90px);opacity:.5;pointer-events:none;animation:drift 18s ease-in-out infinite alternate}
-@keyframes drift{to{transform:translate(60px,-40px) scale(1.2)}}
-@keyframes shimmer{to{background-position:200% 0}}
-.shimmer{background-size:200% 100%;animation:shimmer 2.4s linear infinite}
-@keyframes pulse-ring{0%{box-shadow:0 0 0 0 var(--p)}100%{box-shadow:0 0 0 12px transparent}}
-.pulse{animation:pulse-ring 1.8s infinite}
-input[type=range]{accent-color:#8b5cf6;width:100%}
-button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
-::-webkit-scrollbar{height:6px;width:6px}::-webkit-scrollbar-thumb{background:#2a3590;border-radius:9px}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+@property --sky {
+    syntax: '<color>';
+    inherits: true;
+    initial-value: #0d5c55
+}
+
+@theme {
+    --color-navy-950: #050818;
+    --color-navy-900: #0a1030;
+    --color-navy-800: #111a4a;
+    --color-navy-700: #1a2570
+}
+
+:root {
+    color-scheme: dark
+}
+
+body {
+    --sky: #0d5c55;
+    transition: --sky 1.4s ease;
+    margin: 0;
+    color: #e6e9ff;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    min-height: 100vh;
+    background: #050818
+}
+
+.glass {
+    background: linear-gradient(145deg, rgba(32, 42, 120, .42), rgba(10, 16, 52, .62));
+    border: 1px solid rgba(130, 140, 255, .16);
+    backdrop-filter: blur(14px);
+    transition: border-color .3s, box-shadow .3s
+}
+
+.glass:hover {
+    border-color: rgba(160, 150, 255, .35)
+}
+
+.blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: .5;
+    pointer-events: none;
+    animation: drift 18s ease-in-out infinite alternate
+}
+
+@keyframes drift {
+    to {
+        transform: translate(60px, -40px) scale(1.2)
+    }
+}
+
+@keyframes shimmer {
+    to {
+        background-position: 200% 0
+    }
+}
+
+.shimmer {
+    background-size: 200% 100%;
+    animation: shimmer 2.4s linear infinite
+}
+
+@keyframes pulse-ring {
+    0% {
+        box-shadow: 0 0 0 0 var(--p)
+    }
+
+    100% {
+        box-shadow: 0 0 0 12px transparent
+    }
+}
+
+.pulse {
+    animation: pulse-ring 1.8s infinite
+}
+
+input[type=range] {
+    accent-color: #8b5cf6;
+    width: 100%
+}
+
+button {
+    cursor: pointer
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid #a78bfa;
+    outline-offset: 2px
+}
+
+::-webkit-scrollbar {
+    height: 6px;
+    width: 6px
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2a3590;
+    border-radius: 9px
+}
+
+@media (prefers-reduced-motion:reduce) {
+    * {
+        animation: none !important;
+        transition: none !important
+    }
+}

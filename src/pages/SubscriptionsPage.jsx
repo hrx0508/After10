@@ -1,2 +1,4 @@
-import PageHeader from '../components/layout/PageHeader.jsx';import SubscriptionRadar from '../features/subscriptions/SubscriptionRadar.jsx';import SubscriptionList from '../features/subscriptions/SubscriptionList.jsx';
-export default function SubscriptionsPage(){return <div><PageHeader title="Subscriptions" sub="Pause what you don't use and watch your runway grow."/><div className="space-y-5"><SubscriptionRadar/><SubscriptionList/></div></div>}
+import PageHeader from '../components/layout/PageHeader.jsx';
+import SubscriptionRadar from '../features/subscriptions/SubscriptionRadar.jsx';
+import SubscriptionList from '../features/subscriptions/SubscriptionList.jsx';
+export default function SubscriptionsPage() { return <div><PageHeader title="Subscriptions" sub="Pause what you don't use and watch your runway grow." /><div className="space-y-5"><SubscriptionRadar /><SubscriptionList /></div></div> }

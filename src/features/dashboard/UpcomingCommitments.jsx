@@ -1,5 +1,13 @@
-import {CalendarClock} from 'lucide-react';import {Link} from 'react-router-dom';import GlassCard from '../../components/ui/GlassCard.jsx';import SectionTitle from '../../components/ui/SectionTitle.jsx';import Badge from '../../components/ui/Badge.jsx';import {Icon} from '../../components/ui/IconMap.jsx';
-import {useFin} from '../../store/index.js';import {inr,dateLabel} from '../../engine/format.js';
-export default function UpcomingCommitments({limit=4}){const {commitments,subs,day}=useFin(),all=[...commitments,...subs.filter(s=>s.active).map(s=>({...s,kind:'Recurring'}))].filter(b=>b.day>=day).sort((a,b)=>a.day-b.day).slice(0,limit);
- return <GlassCard><SectionTitle icon={CalendarClock} color="#38bdf8" title="Upcoming Commitments" right={<Link to="/calendar" className="text-xs text-violet-300 hover:underline">View all →</Link>}/>
-  <div className="divide-y divide-white/10">{all.map(b=><div key={b.id} className="flex items-center justify-between py-2.5"><div className="flex items-center gap-3"><span className="w-12 text-xs text-white/55">{dateLabel(b.day)}</span><div><p className="text-sm font-medium">{b.name}</p><Badge color={b.kind==='Recurring'?'#38bdf8':'#fbbf24'}>{b.kind}</Badge></div></div><b className="text-sm">{inr(b.amount)}</b></div>)}</div></GlassCard>}
+import { CalendarClock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import GlassCard from '../../components/ui/GlassCard.jsx';
+import SectionTitle from '../../components/ui/SectionTitle.jsx';
+import Badge from '../../components/ui/Badge.jsx';
+import { Icon } from '../../components/ui/IconMap.jsx';
+import { useFin } from '../../store/index.js';
+import { inr, dateLabel } from '../../engine/format.js';
+export default function UpcomingCommitments({ limit = 4 }) {
+    const { commitments, subs, day } = useFin(), all = [...commitments, ...subs.filter(s => s.active).map(s => ({ ...s, kind: 'Recurring' }))].filter(b => b.day >= day).sort((a, b) => a.day - b.day).slice(0, limit);
+    return <GlassCard><SectionTitle icon={CalendarClock} color="#38bdf8" title="Upcoming Commitments" right={<Link to="/calendar" className="text-xs text-violet-300 hover:underline">View all →</Link>} />
+        <div className="divide-y divide-white/10">{all.map(b => <div key={b.id} className="flex items-center justify-between py-2.5"><div className="flex items-center gap-3"><span className="w-12 text-xs text-white/55">{dateLabel(b.day)}</span><div><p className="text-sm font-medium">{b.name}</p><Badge color={b.kind === 'Recurring' ? '#38bdf8' : '#fbbf24'}>{b.kind}</Badge></div></div><b className="text-sm">{inr(b.amount)}</b></div>)}</div></GlassCard>
+}
