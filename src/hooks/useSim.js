@@ -1,8 +1,5 @@
-import {useMemo} from 'react';import {simulate} from '../core/engine.js';import {useFinance,snapshot} from '../store/useFinance.js';
-const NONE=[];
-/** Reality (or reality + hypothetical decisions). Pass a memoised array. */
-export const useSim=(decs=NONE)=>{const s=useFinance();return useMemo(()=>simulate(snapshot(s),decs),[s.day,s.balance,s.ledger,s.subs,s.commitments,s.goals,s.income,decs])};
-/** One simulation per open fork. */
-export const useForkRows=()=>{const s=useFinance();return useMemo(()=>s.forks.map(f=>({f,r:simulate(snapshot(s),[f])})),[s.day,s.balance,s.ledger,s.subs,s.commitments,s.goals,s.income,s.forks])};
-/** What-if helper: scenario(mutator, decs) → simulation. */
-export const useScenario=()=>{const s=useFinance();return (mut,decs=NONE)=>simulate({...snapshot(s),...mut(snapshot(s))},decs)};
+import {useMemo} from 'react';import {useShallow} from 'zustand/react/shallow';import {useFin} from '../store/index.js';import {simulate} from '../engine/simulate.js';
+const NONE=[],core=s=>({day:s.day,balance:s.balance,pace:s.pace,subs:s.subs,commitments:s.commitments,goals:s.goals});
+export const useCore=()=>useFin(useShallow(core));
+export const useSim=(decs=NONE)=>{const c=useCore();return useMemo(()=>simulate(c,decs),[c,decs])};
+export const useScenarioRows=()=>{const c=useCore(),forks=useFin(s=>s.forks);return useMemo(()=>forks.map(f=>({f,r:simulate(c,[f])})),[c,forks])};

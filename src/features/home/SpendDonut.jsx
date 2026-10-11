@@ -1,3 +1,0 @@
-import Card from '../../components/ui/Card.jsx';import Donut,{DONUT_COLORS} from '../../components/charts/Donut.jsx';import {inr} from '../../core/format.js';
-export default function SpendDonut({ledger}){const m={};ledger.forEach(l=>{m[l.cat]=(m[l.cat]||0)+l.amount});const d=Object.entries(m).map(([name,value])=>({name,value}));
- return <Card><h3 className="font-bold">Where it went</h3>{d.length?<div className="flex items-center gap-3"><Donut data={d}/><ul className="text-xs">{d.map((x,i)=><li key={x.name}><span style={{color:DONUT_COLORS[i%6]}} aria-hidden>●</span> {x.name} {inr(x.value)}</li>)}</ul></div>:<p className="mt-3 text-sm text-white/70">No spending logged yet. Use “Log spend” to start.</p>}</Card>}

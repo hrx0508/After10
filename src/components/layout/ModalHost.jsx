@@ -1,0 +1,3 @@
+import {useFin} from '../../store/index.js';import AddMoneyModal from '../../features/money/AddMoneyModal.jsx';import SettingsModal from '../../features/settings/SettingsModal.jsx';import GoalModal from '../../features/goals/GoalModal.jsx';import ImpactModal from '../../features/chaos/ImpactModal.jsx';
+export default function ModalHost(){const m=useFin(s=>s.modal),close=useFin(s=>s.closeModal);const p={onClose:close,...(m?.props||{})};
+ return <>{m?.type==='add-money'&&<AddMoneyModal {...p}/>}{m?.type==='settings'&&<SettingsModal {...p}/>}{m?.type==='goal'&&<GoalModal {...p}/>}{m?.type==='impact'&&<ImpactModal {...p}/>}</>}

@@ -1,0 +1,1 @@
+export default function Badge({color='#8b5cf6',icon:I,children}){return <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold" style={{background:color+'26',color,border:`1px solid ${color}55`}}>{I&&<I size={12}/>}{children}</span>}
