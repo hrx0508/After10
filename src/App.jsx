@@ -8,4 +8,10 @@ import ChaosPage from './pages/ChaosPage.jsx';
 import GoalsPage from './pages/GoalsPage.jsx';
 import CalendarPage from './pages/CalendarPage.jsx';
 import ActivityPage from './pages/ActivityPage.jsx';
-export default function App() { return <HashRouter><Routes><Route element={<AppShell />}><Route index element={<HomePage />} /><Route path="multiverse" element={<MultiversePage />} /><Route path="weather" element={<WeatherPage />} /><Route path="subscriptions" element={<SubscriptionsPage />} /><Route path="chaos" element={<ChaosPage />} /><Route path="goals" element={<GoalsPage />} /><Route path="calendar" element={<CalendarPage />} /><Route path="activity" element={<ActivityPage />} /><Route path="*" element={<Navigate to="/" replace />} /></Route></Routes></HashRouter> }
+import Setup from './components/ui/SetUp.jsx';
+import { useFin } from './store/index.js';
+export default function App() {
+    const onboarded = useFin(s => s.onboarded);
+    if (!onboarded) return <Setup />;
+    return <HashRouter><Routes><Route element={<AppShell />}><Route index element={<HomePage />} /><Route path="multiverse" element={<MultiversePage />} /><Route path="weather" element={<WeatherPage />} /><Route path="subscriptions" element={<SubscriptionsPage />} /><Route path="chaos" element={<ChaosPage />} /><Route path="goals" element={<GoalsPage />} /><Route path="calendar" element={<CalendarPage />} /><Route path="activity" element={<ActivityPage />} /><Route path="*" element={<Navigate to="/" replace />} /></Route></Routes></HashRouter>
+}
