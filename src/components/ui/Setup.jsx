@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import GlassCard from './ui/GlassCard.jsx';
-import Button from './ui/Button.jsx';
-import { useFin } from '../store/index.js';
+import GlassCard from './GlassCard.jsx';
+import Button from './Button.jsx';
+import { useFin } from '../../store/index.js';
 
 export default function Setup() {
   const completeSetup = useFin(s => s.completeSetup);
