@@ -8,7 +8,7 @@ import ChaosPage from './pages/ChaosPage.jsx';
 import GoalsPage from './pages/GoalsPage.jsx';
 import CalendarPage from './pages/CalendarPage.jsx';
 import ActivityPage from './pages/ActivityPage.jsx';
-import Setup from './components/ui/SetUp.jsx';
+import Setup from './components/ui/Setup.jsx';
 import { useFin } from './store/index.js';
 export default function App() {
     const onboarded = useFin(s => s.onboarded);
